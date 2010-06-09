@@ -1,0 +1,60 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<%=
+"html".tag({:xmlns=>"http://www.w3.org/1999/xhtml"}){
+  "meta".tag({ :http-equiv=>"Content-Type", content=>"text/html; charset=UTF-8" }) +
+  "head".tag({ :profile=>"http://gmpg.org/xfn/11" }){
+    "title"{ "=h page_title" } +
+    page_header +
+    stylesheet_link_tag('/stylesheets/theme/application.css', :media => 'all') +
+  } +
+  "body".tag{
+    "div".tag({:id=>"header"}){
+      "div".tag({:id="logo"}){
+        "h1".tag({ link_to this_blog.blog_name, this_blog.base_url })+
+        "h2".tag({ this_blog.blog_subtitle })
+      } +
+      "div".tag({:id=>"menu"}){
+        "ul".tag{
+          "li".tag({ :class=>"page_item #{'current_page_item' if (controller.controller_name == "articles" and controller.action_name == "index")}}){
+            link_to("Home", this_blog.base_url) +
+            "li".tag({ :class=>"page_item #{'current_page_item' if (controller.action_name != 'index' and controller.action_name != 'view_page')} }){ 
+              if (controller.controller_name != "index" )
+                link_to "Articles", {:controller => "articles", :action => "archives"} 
+              else
+          } +
+          "li".tag({:class=>"page_item #{'current_page_item' if (controller.controller_name == "articles" and controller.action_name == "view_page" and params[:name].to_s == 'about')}"}){ 
+            link_to "About", this_blog.base_url + "/pages/about" 
+          }
+        }
+      }
+    } +
+
+    "div".tag(:id="page"){
+      "div".tag(:id=>"content"){
+        @content_for_layout +
+        javascript_tag('show_dates_as_local_time()')
+      } +
+      "div".tag(:id=>"sidebar"){
+        render(:partial => 'shared/search' ) +
+        render_sidebars
+      } +
+      "br".tag(:style=>"clear:both;") 
+    } +
+
+    "div".tag(:style=>"float:left;margin-left:30px;margin-top:35px;background:url(/images/imagesbottom.gif) right bottom no-repeat;"){
+      "p".tag(:style=>'background:green;color:white;font-weight:bold'){"Recent searches:"}{
+        "ul".tag({:id=>"searches",:style=>"border-top:2px solid green;list-style:none;background:#cdffc7;"}){
+          "li".tag({:class=>"search",:style=>"margin-left:0;text-align:left;padding:5px 0 5px 0;color:black;border-bottom: 1px solid blue;background:#ffff9b"}){
+            "a".tag(:style=>"link:none;", :href=>"http://www.google.com/search?q=svn ls file:///svn/repositories/blog/trunk/")
+          }
+        }
+      }
+    } +
+
+    "div".tag(:id=>"footer"){
+      "div".tag(:class=>"wrap"){
+        "p".tag(:id=>"legal"){ "Powered by #{link_to 'typo', 'http://typosphere.org'}" }
+      }
+    } 
+  }
+}

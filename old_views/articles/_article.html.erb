@@ -1,0 +1,64 @@
+<%= short = short
+"div".tag(:class=>"atomentry",:id=>"article-#{ article.id }"){
+  "div".tag(:class=>"entry content",:style=>"border-bottom:1px dotted #333; padding-bottom:10px;",:id=>"article-#{article.id}"){
+    "h4".tag(:style=>"border-top:0px"){
+      "a".tag(:class=>"title",:href=>"",:rel=>"bookmark"){
+        (controller.action_name.include? 'permalink') ? article.title : link_to_permalink(article,article.title)
+      }
+    } +
+		if short
+			"p".tag(:onclick=>"location.href='#{article_path(article)}'"){ 
+				article.body.strip_html[0..200] + "..." +
+				" ( "+ link_to_permalink(article, "more&#8230") + " )"
+			}
+		else
+			"p".tag{ article.html(:body) }
+		end +
+    if article.extended? 
+      "div".tag(:class=>"extended"){
+        if controller.action_name == 'index' 
+          "p".tag{ link_to_permalink article,"Continue reading..." }
+        end
+      }
+    else 
+      article.html(:extended)
+    end +
+		"div".tag(:class=>"meta"){
+			if controller.controller_name == "articles" and controller.action_name == 'show'
+				"p".tag{
+					"small".tag{ 
+						"This entry was posted on"+
+						"abbr".tag(:class=>"published", :title=>"#{article.published_at.xmlschema }"){
+							js_distance_of_time_in_words_to_now article.published_at 
+						} +
+						"#{ content_tag(:span, "and " + category_links(@article), :class => 'categories') unless @article.categories.empty? }" + 
+						"You can follow any any response to this entry through the" +
+						"a".tag(:href=>"#{ url_for :controller => 'xml', :action=>'feed', :type=>'article', :format => 'atom', :id => @article }"){
+							"Atom feed"
+						} +
+						"You can leave a " + 
+						"#{link_to_permalink(article, 'comments', 'comments') << ',' if article.allow_comments? }"+
+						"#{"Or a " + link_to_permalink(article, 'trackback', 'trackbacks')  << ' from your own site' if article.allow_pings? }"
+					}+
+					"br".tag+
+					"small".tag{
+						tag_links(@article) unless @article.tags.empty?
+					}
+				}
+			else
+				"p".tag{
+					"Posted"+
+					"small".tag{
+						"abbr".tag(:class=>"published", :title=>"#{article.published_at.xmlschema }"){
+							js_distance_of_time_in_words_to_now article.published_at 
+						}
+					}+
+					" and has " +
+					link_to_permalink(article,pluralize(article.published_comments.size, 'comment'),'comments', 'comments')
+				}
+			end +
+			"br".tag(:style=>"clear:both;")
+		}
+  }
+}
+%>

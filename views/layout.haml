@@ -1,0 +1,44 @@
+%html{:xmlns=>"http://www.w3.org/1999/xhtml"}
+  %meta{"http-equiv" => "Content-Type", :content => "text/html; charset=UTF-8" }
+  %head{:profile=>"http://gmpg.org/xfn/11"}
+    %title title
+    %link{:href => "/style.css", :rel=>"stylesheet", :type=>"text/css"}
+  %body
+    .container
+      #top{:style=> "padding-top:0px; margin-top:0px;"}
+        #about
+          %h3{:style => "text-align:center"} Activity
+          #leftimages
+            %ul.falbum-recent
+              %a.tag{:href=> "hey"}
+                %img{:src=> "www", :alt=> "title", :title=> "title"}
+        #topright
+          #navbar
+            %ul{:id=>"navigation"}
+              %li
+                %a{:href=>"/"} Home
+              %li
+                %a{:href=>"http://www.whateveryonedoes.com:20000"} Radio
+              %li
+                %a{:href=>"http://www.whateveryonedoes.com/"} World
+              %li
+                %a{:href=>"http://www.flickr.com/photos/towski"} Photos
+              %li
+                %a{:href=>"http://www.travbuddy.com/mwastrod"} Travel
+          .entry{:id => "latest"}
+            %h2 Recent Blog Post
+            %p Do you ever wonder
+        #links
+          %h3{:style => "text-align:center"} Links
+          #inlinks
+            %dl
+              %dt 
+                %a{href='google.com'} bookmark
+              %dd bookmark.description
+        #towski
+          #content
+          #sidebar
+          %br{:style=>"clear:both;"}
+      #footer
+        .wrap
+          %p{:id=>"legal"} copyright towski

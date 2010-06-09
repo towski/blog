@@ -1,0 +1,11 @@
+<%= 
+"h3".tag{"Articles"} +
+render(:partial => 'articles/article', :collection => @articles, :locals => {:short => true})
+%>
+<%= 
+unless @pages.item_count <= this_blog.limit_article_display 
+  "p".tag(:class=>"pagination"){
+    "Older posts:" + pagination_links(@pages, :params => { :action => @controller.action_name })
+  }
+end
+%>

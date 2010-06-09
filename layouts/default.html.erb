@@ -1,0 +1,118 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<%= "html".tag({:xmlns=>"http://www.w3.org/1999/xhtml"}){
+	published_articles = Article.find_all_by_published(true)
+	random_article = published_articles[rand(published_articles.size)] 
+  "meta".tag({ "http-equiv"=>"Content-Type", :content=>"text/html; charset=UTF-8" }) +
+  "head".tag(:profile=>"http://gmpg.org/xfn/11"){
+    "title".tag{ h(page_title) } +
+    page_header +
+    stylesheet_link_tag('/stylesheets/theme/application.css', :media => 'all') +
+    stylesheet_link_tag("style") +
+    auto_discovery_link_tag(:rss, "http://blog.familopia.com/?feed=rss2", :title=>"Life Spider RSS Feed") +
+    stylesheet_link_tag("style.css", :rel=>"stylesheet", :type=>"text/css") +
+    javascript_include_tag("http://www.google-analytics.com/urchin.js") +
+    javascript_include_tag("/animation.js")+
+    javascript_tag(<<-JS
+      var descriptionArray = new Array();
+      var titleArray = new Array();
+      var timer;
+      _uacct = "UA-83115-4";
+      urchinTracker();
+      JS
+    )
+  } +
+  "body".tag{
+			"h1".tag(:style => "color:gray"){ "towski" } +
+    "div".tag(:class=>"container"){
+      "div".tag(:id=>"top", :style=> "padding-top:0px; margin-top:0px;"){
+        "div".tag(:id => "header"){
+					"h3".tag{ "recent google searches" } +
+          "div".tag(:style=>"margin-top:30px"){
+            "ol".tag(:id=>"searches",:style=>"text-align:left"){
+							GoogleResults.new.to_s
+            }
+          }
+        }+
+        "div".tag(:id=>"topright"){
+          "div".tag(:id=>"navbar"){
+            "ul".tag(:id=>"navigation"){
+              "li".tag{"a".tag(:href=>"/"){"Home"}}+
+              "li".tag{"a".tag(:href=>"http://www.whateveryonedoes.com:20000"){"Radio"}}+
+              "li".tag{"a".tag(:href=>"http://www.whateveryonedoes.com/"){"World"}}+
+              "li".tag{"a".tag(:href=>"http://www.flickr.com/photos/towski"){"Photos"}}+
+              "li".tag{"a".tag(:href=>"http://www.travbuddy.com/mwastrod"){"Travel"}}
+            }
+          }+
+          "div".tag({:class=>"entry",:id=>"latest",:onclick=>"location.href='#{article_path( @latest_article ? @latest_article : random_article)}'", :onmouseout=>""}){
+						if(params[:action] == "index") 
+							body = @latest_article.body.strip_html
+							"h2".tag{ @latest_article.title }+
+							"p".tag { excerpt( body, body[200..212], 200 ) }
+						else
+							"h2".tag{ "Random Content: "+random_article.title }+
+							"p".tag do 
+								body = random_article.body.strip_html
+								if body.size > 400
+									random_median = rand(body.size - 200) + 200; 
+								else
+									random_median = body.size / 2
+								end
+								excerpt( body, body[random_median..(random_median+12)], 200 ) 
+							end
+						end
+          }+
+          "div".tag(:id=>"latest2",:style=>"height:70px; margin-top:20px;"){
+            "h2".tag{"About the author"}+
+            "p".tag{"Matthew likes to contribute to systems and get feedback. More specifically, he's a rails developer"} 
+          }
+        }+ 
+        "div".tag(:id=>"about"){
+          "h3".tag{"Images:"}+
+          "div".tag(:id=>"leftimages"){
+            "ul".tag(:class=>'falbum-recent'){
+              Feed.find_by_title("flickr").rss.items[0..4].to_html do |photo|
+                "a".tag(:href=>photo.link){
+                  "img".tag(:src=>photo.enclosure.url, :alt=>photo.title, :title=>photo.title)
+                }
+              end
+            }
+          }
+        }+
+        "div".tag(:id=>"towski"){
+          "div".tag(:id=>"content"){
+            @content_for_layout +
+            javascript_tag('show_dates_as_local_time()')
+          } +
+          "div".tag(:id=>"sidebar"){
+            #render(:partial => 'shared/search' ) +
+            #render_sidebars
+          } +
+          "br".tag(:style=>"clear:both;") 
+        }
+      }+
+    	"div".tag(:id=>"links"){
+        "h3".tag{
+          link_to("del.ico.us", "http://del.icio.us/towski") + " links" 
+        }+
+        "div".tag(:id=>"inlinks"){
+          "dl".tag{
+            Feed.find_by_title("delicious").rss.items[0..6].to_html do |bookmark|
+              "dt".tag{
+                link_to bookmark.title,  bookmark.link
+              }+
+              "dd".tag{
+                bookmark.description
+              }
+            end
+          }
+        }
+      } +
+      "div".tag(:id=>"footer"){
+        "div".tag(:class=>"wrap"){
+          "p".tag(:id=>"legal"){ "More or less powered by #{link_to 'typo', 'http://typosphere.org'}" }
+        }
+      } 
+    }
+  }
+}
+%>
